@@ -1,0 +1,4 @@
+for I in `seq 21 27`;
+do
+	echo "%$I\$c" | ./level02 | grep "does not" | sed s/'does not have access!'//g
+done

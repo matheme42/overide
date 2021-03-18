@@ -1,0 +1,53 @@
+level06@OverRide:~$ gdb level06
+GNU gdb (Ubuntu/Linaro 7.4-2012.04-0ubuntu2.1) 7.4-2012.04
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://bugs.launchpad.net/gdb-linaro/>...
+Reading symbols from /home/users/level06/level06...(no debugging symbols found)...done.
+(gdb) b *0x080487ba
+Breakpoint 1 at 0x80487ba
+(gdb) b *0x08048866
+Breakpoint 2 at 0x8048866
+(gdb) r
+Starting program: /home/users/level06/level06
+***********************************
+*		level06		  *
+***********************************
+-> Enter Login: qwertyuiop
+***********************************
+***** NEW ACCOUNT DETECTED ********
+***********************************
+-> Enter Serial: 42
+
+Breakpoint 1, 0x080487ba in auth ()
+(gdb) p $eax=0		<-- remise a 0 du registre eax
+$1 = 0
+(gdb) c
+Continuing.
+
+Breakpoint 2, 0x08048866 in auth ()
+(gdb) x/d $ebp-0x10
+0xffffd638:	6234929
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 2420] will be killed.
+
+Quit anyway? (y or n) y
+level06@OverRide:~$ ./level06
+***********************************
+*		level06		  *
+***********************************
+-> Enter Login: qwertyuiop
+***********************************
+***** NEW ACCOUNT DETECTED ********
+***********************************
+-> Enter Serial: 6234929
+Authenticated!
+$ cat /home/users/level07/.pass
+GbcPDRgsFK77LNnnuh7QyFYA2942Gp8yKj9KrWD8

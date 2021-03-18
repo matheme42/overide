@@ -1,0 +1,12 @@
+pour le niveau level00
+if suffit de valider cette comparaison pour que le programme nous lance un shell avec les droits de level01
+-->   0x080484e7 <+83>:	cmp    $0x149c,%eax
+
+level00@OverRide:~$ ./level00
+***********************************
+* 	     -Level00 -		  *
+***********************************
+Password:5276
+
+Authenticated!
+$

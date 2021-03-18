@@ -1,0 +1,11 @@
+en regardant de plsu pret le code source on remarque que le programme effectue un xor (equivalent à un rot) sur une chaine de caractere "C}|u`sfg~sf{}|a"
+Il suffit donc d'essayer toute les possibilités de rot pour trouver le bon.
+la solution étant "322424827"
+
+level03@OverRide:~$ ./level03
+***********************************
+*		level03		**
+***********************************
+Password:322424827
+$ cat /home/users/level04/.pass
+kgv3tkEb9h2mLkRsPkXRfc2mHbjMxQzvb2FrgKkf
